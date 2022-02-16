@@ -3,58 +3,35 @@
   <head>
     <meta charset="utf-8">
     <title>MI REPORTE</title>
-    <link rel="stylesheet" href="https://tools.test/css/app.css">
     <style>
-.text-gray-500 {
-    --tw-text-opacity: 1;
-    color: rgb(107 114 128 / 1);
-}
-.tracking-wider {
-    letter-spacing: 0.05em;
-}
-.leading-4 {
-    line-height: 1rem;
-}
-.leading-5 {
-    line-height: 1.25rem;
-}
-.font-medium {
-    font-weight: 500;
-}
-.text-xs {
-    font-size: 0.75rem;
-    line-height: 1rem;
-}
-.px-3 {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-}
-.py-2 {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
-}
-.bg-gray-50 {
-    --tw-bg-opacity: 1;
-    background-color: rgb(249 250 251 / 1));
-}
-.border-b {
-    border-bottom-width: 1px;
-}
-.md\:break-all {
-    word-break: break-all;
-}
-.font-medium {
-    font-weight: 500;
-}
+        *{
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+        }
+        table{
+            width: 100%;
+            border-collapse: collapse
+        }
+        table td,table th{
+            border-bottom:1px solid #e5e7eb;; 
+        }
+        th{
+            background-color: #dbdbdb;
+            padding:6px 10px;
+            font-weight: bold
 
-.text-sm {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-}
-.px-3 {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-}
+        }
+        td{
+            padding: 6px 10px;
+        }
+        tbody,thead{
+            border: 1px solid #e5e7eb
+        }
+        p{
+            padding:2px 0;
+            margin:0;
+            line-height:14px;
+        }
     </style>
   </head>
   <body>
@@ -73,52 +50,67 @@
           </div>
             
       </div>
-        <x-table-responsive>
+        <table>
             <thead>
                 <tr>
-                  <x-th>#</x-th>
-                  <x-th>FECHA DE VENTA</x-th>
-                  <x-th>PEDIDO N°</x-th>
-                  <x-th>ESTADO</x-th>
-                  <x-th>PRODUCTOS</x-th>
-                  <x-th>SUBTOTAL</x-th>
-                  <x-th>TOTAL PAGADO</x-th>
-                  <x-th>USUARIOS</x-th>
+                  <th>PEDIDO</th>
+                  <th>DETALLE DE PEDIDO</th>
    
                 </tr>
                 </thead>
                 <tbody>
                     @foreach ($pedidos as $index => $pedido)
                         <tr>
-                            <x-td>
-                                {{$index + 1}}
-                            </x-td>
-                            <x-td>
-                                {{date('Y-m-d',strtotime($pedido->created_at))}}
-                            </x-td>
-                            <x-td>
-                                {{ 'P' . str_pad($pedido->id, 4, "0", STR_PAD_LEFT) }}
-                            </x-td>
-                            <x-td> {{ $pedido->estado }} </x-td>
-                            <x-td> - </x-td>
-                            <x-td> {{ $pedido->subtotal }} </x-td>
-                            <x-td> {{ $pedido->total }} </x-td>
-                            <x-td> 
+                            <td>
+                                <p>N°: {{$index + 1}}</p>
+                                <p>Código: {{ 'P' . str_pad($pedido->id, 4, "0", STR_PAD_LEFT) }}</p>
+                                <p>Fecha: {{date('Y-m-d',strtotime($pedido->created_at))}}</p>
+                                <p>Estado: {{ mb_strtoupper($pedido->estado) }}</p>
+                                <p>Total calculado: {{ $pedido->subtotal }}</p>
+                                <p>Total registrado: {{ $pedido->total }}</p>
+                                <p>Mesa: {{ $pedido->mesa }}</p>
                                 @if($pedido->usuario_modifico!=null && $pedido->usuario_modifico!='0')
-                                <p>MODIFICÓ: {{mb_strtoupper($pedido->usuario_modifico)}}</p>
+                                <p>Usuario que creó/modificó:: {{mb_strtoupper($pedido->usuario_modifico)}}</p>
                                 @endif
                                 @if($pedido->usuario_cancelo!=null && $pedido->usuario_cancelo!='0')
-                                <p>CANCELÓ: {{mb_strtoupper($pedido->usuario_cancelo)}}</p>
+                                <p>Usuario que canceló: {{mb_strtoupper($pedido->usuario_cancelo)}}</p>
                                 @endif
                                 @if($pedido->usuario_proceso!=null && $pedido->usuario_proceso!='0')
-                                <p>PROCESÓ: {{mb_strtoupper($pedido->usuario_proceso)}}</p>
+                                <p>Usuario que genero el pago: {{mb_strtoupper($pedido->usuario_proceso)}}</p>
                                 @endif
-                            </x-td>
+                            </td>
+                            <td>
+                                
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>PRODUCTO</th>
+                                            <th>CANTIDAD</th>
+                                            <th>PRECIO</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if ($pedido->detallepedido!=null)
+                                            @if ($pedido->detallepedido->count()>0)
+                                            <tr>
+                                                @foreach ($pedido->detallepedido as $key => $detalle)
+                                                    <td>{{$key+1}}</td>
+                                                    <td>{{$detalle->menu_titulo}}</td>
+                                                    <td>{{$detalle->menu_cantidad}}</td>
+                                                    <td>{{$detalle->menu_subtotal}}</td>
+                                                @endforeach
+                                            </tr>
+                                            @endif
+                                        @endif
+                                    </tbody>
+                                </table>
+                            </td>
                         </tr>
                         
                         @endforeach
                 </tbody>
-        </x-table-responsive>
+            </table>
     
   </body>
 </html>

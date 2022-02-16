@@ -33,15 +33,18 @@
                             <div class="block px-4 py-2 text-xs text-gray-400">
                                 Administrar cuentas
                             </div>
+                            <x-jet-dropdown-link href="{{ route('dashboard') }}">
+                                Inicio
+                            </x-jet-dropdown-link>
 
                             <x-jet-dropdown-link href="{{ route('profile.show') }}">
                                 Perfil
                             </x-jet-dropdown-link>
-
+                            @if(Auth::user()->categoria=='caja')
                             <x-jet-dropdown-link href="{{ route('reporte') }}">
                                 Reporte
                             </x-jet-dropdown-link>
-
+                            @endif
                             <div class="border-t border-gray-100"></div>
 
                             <!-- Authentication -->
@@ -95,6 +98,9 @@
             </div>
 
             <div class="mt-3 space-y-1">
+                <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
+                    Inicio
+                </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
                     Perfil
                 </x-responsive-nav-link>

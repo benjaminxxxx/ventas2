@@ -4,6 +4,7 @@
 
 <div class="flex justify-space-between w-full">
     <x-h1 class="text-gray-900">{{$npedido}}</x-h1>
+  
     <div class="w-48">
         @livewire('navigation-menu')
     </div>
@@ -151,4 +152,59 @@
         </tfoot>
     </x-table-responsive>
 </x-card>
+@if(Auth::user()->categoria=='caja')
+<x-panel class="mt-10">
+    <x-titulo>Ventas de hoy</x-titulo>
+    <x-table-responsive>
+        <thead>
+            <tr>
+                <x-th class="text-center" value="N°" />
+                <x-th class="text-center" value="Hora" />
+                <x-th class="text-center" value="Mesa" />
+                <x-th class="text-right" value="Subtotal" />
+                <x-th class="text-center" value="Atendido" />
+            </tr>
+        </thead>
+        <tbody>
+            @if(count($ventas)>0)
+                @foreach ($ventas as $ventaIndex => $venta)
+                @php
+                    $classSelectedD = '';
+                    if($venta->id == $pedidoseleccionado):
+                    $classSelectedD = 'bg-green-400';
+                    endif
+                @endphp
+                <tr class="{{$classSelectedD}}">
+                    <x-td class="text-center">
+                        @php
+                            $codigolargo = 'P' . str_pad($venta->id, 4, "0", STR_PAD_LEFT);
+                            
+                        @endphp
+                        <a href="#" class="underline text-blue-500" wire:click.prevent="vermesa({{$venta->id}},'{{$codigolargo}}')">{{$codigolargo}}</a>
+                    </x-td>
+                    <x-td class="text-center">
+                        {{date('H:i:s',strtotime($venta->created_at))}}
+                    </x-td>
+                    <x-td class="text-center">
+                        {{$venta->mesa}}
+                    </x-td>
+                    <x-td class="text-right">
+                        {{$venta->subtotal}}
+                    </x-td>
+                    <x-td class="text-center">
+                        {{mb_strtoupper($venta->estado)}}
+                    </x-td>
+                    
+                </tr>  
+                @endforeach
+            @else
+                <tr>
+                    <x-td colspan="100%">Ninguna venta aún</x-td>
+                </tr>
+            @endif
+        </tbody>
+      
+    </x-table-responsive>
+</x-panel>
+@endif
 

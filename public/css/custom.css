@@ -21,6 +21,9 @@
 .h-32{
     height: 8rem;
 }
+.w-176{
+    width: 44rem;
+}
 .bg-green-400{
     background-color: #BEF264;
 }
@@ -30,6 +33,9 @@
 }
 .justify-space-between{
     justify-content: space-between;
+}
+.w-screenx4{
+    width: calc(100vw * 4);
 }
 /*******/
 @media(min-width:640px){
@@ -42,12 +48,8 @@
 }
 @media (min-width: 768px)
 {
-    .sm\:w-97 {
-        width: 24rem;
-    }
-  
-    .md\:w-96x4 {
-        width: calc(24rem * 4);
+    .md\:w-screenx4{
+        width: calc(100vw * 4);
     }
     .lg\:grid-cols-6 {
         grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -58,16 +60,19 @@
     .lg\:w-98{
         width: 30rem;
     }
-    .lg\:w-98x4{
-        width: calc(30rem * 4);
+    .lg\:w-132x4{
+        width: calc(33rem * 4);
+    }
+    .lg\:w-132{
+        width: 33rem;
     }
 }
 @media(min-width:1280px){
-    .xl\:w-100{
-        width: 34rem;
+    .xl\:w-176{
+        width: 44rem;
     }
-    .xl\:w-100x4{
-        width: calc(34rem * 4);
+    .xl\:w-176x4{
+        width: calc(44rem * 4);
     }
     .xl\:grid-cols-8 {
         grid-template-columns: repeat(8, minmax(0, 1fr));

@@ -1,5 +1,5 @@
 <div 
 {{ $attributes->merge(
-    ['class' => 'inline-flex items-center justify-center px-4 py-2 rounded-full bg-yellow-400']) }}>
+    ['class' => 'inline-flex items-center justify-center p-1 rounded-full bg-yellow-400']) }}>
     {{ $slot }}
 </div>

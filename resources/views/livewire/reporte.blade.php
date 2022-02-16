@@ -55,7 +55,7 @@
                     @foreach ($pedidos as $index => $pedido)
                     <tr class="border-b">
                         <x-td>{{$index+1}}</x-td>
-                        <x-td>{{date('Y-m-d',strtotime($pedido->created_at))}}</x-td>
+                        <x-td>{{date('Y-m-d [H:i:s]',strtotime($pedido->created_at))}}</x-td>
                         <x-td>{{ 'P' . str_pad($pedido->id, 4, "0", STR_PAD_LEFT) }}</x-td>
                         <x-td>{{mb_strtoupper($pedido->estado)}}</x-td>
                         <x-td>

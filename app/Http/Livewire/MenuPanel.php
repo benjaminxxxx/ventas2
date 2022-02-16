@@ -6,8 +6,11 @@ use Livewire\Component;
 use App\Models\Menu;
 use App\Models\Pedido;
 use App\Models\Detallepedido;
+use App\Events\MyEvent;
 use DB;
 use Auth;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\Printer;
 
 class MenuPanel extends Component
 {
@@ -33,6 +36,23 @@ class MenuPanel extends Component
     public $porpagar_vuelto;
     public $porpagar_total;
 
+    public $showNewOrderNotification = 'false';
+
+
+    public function getListeners()
+    {
+        return [
+            "echo:my-channel,.my-event" => 'notifyNewOrder',
+        ];
+    }
+    public function notifyNewOrder()
+    {
+        $this->showNewOrderNotification = 'true';
+        if(Auth::user()->categoria=='caja'):
+            $this->dispatchBrowserEvent('sendnotification',[]);
+        endif;
+        $this->render();
+    }
     public function render()
     {
         $menus = Menu::get()->toArray();
@@ -65,9 +85,14 @@ class MenuPanel extends Component
             }
         }
 
+        $hoy = date('Y-m-d-');
+
+        $ventas = Pedido::whereDate('created_at', '=',$hoy)->orderBy('created_at','desc')->get();
+
         return view('livewire.menu',[
             'menus'=>$nuevomenu,
-            'mesasOcupadas'=>$vmesasOcupadas
+            'mesasOcupadas'=>$vmesasOcupadas,
+            'ventas'=>$ventas
         ]);
     }
     public function vermesa($id,$codigomesa){
@@ -158,7 +183,19 @@ class MenuPanel extends Component
         $this->modoEditar = false;
     }
     public function enviarpedido($pedidoseleccionado = false,$pagar=false){
-        
+        /*$nombreImpresora = "smb://computer/printer notation";//"XP-80C";//
+            $connector = new WindowsPrintConnector($nombreImpresora);
+            $impresora = new Printer($connector);
+            $impresora->setJustification(Printer::JUSTIFY_CENTER);
+            $impresora->setTextSize(2, 2);
+            $impresora->text("Imprimiendo\n");
+            $impresora->text("ticket\n");
+            $impresora->text("de\n");
+            $impresora->text("Prueba\n");
+            $impresora->setTextSize(1, 1);
+            $impresora->text("hventas");
+            $impresora->feed(5);
+            $impresora->close();*/
         DB::beginTransaction();
         try{
             
@@ -173,6 +210,12 @@ class MenuPanel extends Component
             ]);
                 
             $pedidoId = $pedido->id;
+/*********************************PUSHER */
+            //$this->orderId = $orderId;
+            //$this->notifyNewOrder();
+            
+            event(new MyEvent('hello world'));
+            /********************************************** */
 
             if(count($this->carrito)){
                 

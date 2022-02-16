@@ -34,7 +34,7 @@ class Reporte extends Component
             }
  
         }else{
-            $pedidos = Pedido::where($filter)->with(['detallepedido'])->paginate(10);
+            $pedidos = Pedido::where($filter)->with(['detallepedido'])->orderBy('created_at','desc')->paginate(10);
         }
 
              
