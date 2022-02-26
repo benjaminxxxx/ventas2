@@ -11,6 +11,7 @@ use DB;
 use Auth;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
+use PDF;
 
 class MenuPanel extends Component
 {
@@ -35,6 +36,8 @@ class MenuPanel extends Component
     public $porpagar_pagado;
     public $porpagar_vuelto;
     public $porpagar_total;
+
+    public $haSidoModificado = false;
 
     public $showNewOrderNotification = 'false';
 
@@ -159,6 +162,8 @@ class MenuPanel extends Component
                 }
             }
 
+            $this->haSidoModificado = true;
+
             $this->carrito = $carrito;
             $this->calculartotal();
         }
@@ -182,6 +187,55 @@ class MenuPanel extends Component
         $this->npedido = 'PEDIDO';
         $this->modoEditar = false;
     }
+    public function imprimirboucher($pedidoId){
+
+        $pedido = Pedido::find($pedidoId);
+      
+
+        if ($pedido!=null) {
+            
+            $carritoObj = Detallepedido::where(['pedido_id'=>$pedidoId])->get();
+
+         
+            $customPaper = array(0,0,250,400);
+            
+            $pdf = PDF::loadView('snippets.detalle', [
+                'detalles'=>$carritoObj,
+                'pedido'=>$pedido
+                ])->setPaper($customPaper)->output();
+            
+                //header("Content-type: application/pdf");
+                //header("Content-Disposition: inline; filename=documento.pdf");
+            
+                //return response()->file($pdf);
+                /*return response()->make(file_get_contents(public_path('pdfs/ficha_c4.pdf')), 200, [
+                    'Content-Type' => 'application/pdf',
+                    'Content-Disposition' => 'inline; filename="2"'
+                ]);*/
+            /*
+                return response()->streamDownload(function () use ($pdf) { 
+                    print($pdf); 
+               }, md5(time()).".pdf"); */
+
+            return response()->streamDownload(
+                fn() => print($pdf), 'Detalle.pdf'
+            );
+
+        }
+
+        
+    }
+    /*
+    public function DownloadNotes(PDF $p) { 
+        $note = AcademyLessonNote::where('user_id',auth()->user()->id)->first(); 
+        if($note)
+        {
+             $pdf = $p->loadView('pdf.notesPdf',compact('note'))->output(); 
+             return response()->streamDownload(function () use ($pdf) { 
+                 print($pdf); 
+            }, md5(time()).".pdf"); 
+        } 
+    }*/
     public function enviarpedido($pedidoseleccionado = false,$pagar=false){
         /*$nombreImpresora = "smb://computer/printer notation";//"XP-80C";//
             $connector = new WindowsPrintConnector($nombreImpresora);
@@ -236,12 +290,14 @@ class MenuPanel extends Component
 
                 $pedido->detallepedido()->insert($arrforsave);
 
+                $this->haSidoModificado = false;
+
                 if($pagar){
                     $this->procesarPago($pedidoId);
                 }
                 
                 //$this->carrito = []; EN CASO PARALAS VENTAS PARA LLEVAR, ES IMPORANTE NO ELIMINAR EL PRODUCTO
-                $this->mesaseleccionada = null;
+                //$this->mesaseleccionada = null;
             }else{
                 DB::rollBack();
             }
@@ -263,6 +319,7 @@ class MenuPanel extends Component
     public function procesarPago($pedidoId){
         
         $pedido = Pedido::with(['detallepedido'])->where(['id'=>$pedidoId])->first();
+     
 
         if($pedido->count()>=1){
             $this->pagando = true;
@@ -290,6 +347,9 @@ class MenuPanel extends Component
         $this->iddemesa = [];
         $this->npedido = 'PEDIDO';
         $this->calculartotal();
+    }
+    public function resetear(){
+        $this->cancelar();
     }
     public function porconfirmar($pedidoporcancelar){
         $this->confirmacion = true;

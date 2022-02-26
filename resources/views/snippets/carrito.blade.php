@@ -53,6 +53,11 @@
             Nuevo Pedido para llevar
         </x-button-pink>
         @endif
+        @if($mesaseleccionada!=null)
+        <x-secondary-button type="button" wire:click="imprimirboucher({{$pedidoseleccionado}})">
+            Imprimir Pedido
+        </x-secondary-button>
+        @endif
     </div>
     
 </div>
@@ -115,7 +120,16 @@
             @if($mesaseleccionada!=null && count($carrito)!=0)
             <tr>
                 <x-th colspan="100%" class="text-right">
+                    <x-button-yellow type="button" wire:click.pevent="resetear()" wire:loading.attr="disabled" >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg> VOLVER A CREAR
+                          <x-loading target="cancelarpedido" fill="black" />
+                    </x-button-yellow>
+
                     @if ($modoEditar)
+
+                    @if($haSidoModificado)
                     <x-button-red type="button" wire:click="enviarpedido({{$pedidoseleccionado}})">
                         <svg xmlns="http://www.w3.org/2000/svg"  wire:loading.attr="disabled" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -124,11 +138,13 @@
                         <x-loading target="enviarpedido"/>
 
                     </x-button-red>
+                    @else
                     <x-button-pink type="button" wire:click="procesarPago({{$pedidoseleccionado}})"  wire:loading.attr="disabled">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg> PROCESAR PAGO
                     </x-button-pink>
+                    @endif
                     <x-secondary-button type="button" wire:click.pevent="porconfirmar({{$pedidoseleccionado}})" wire:loading.attr="disabled" >
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414 6.414a2 2 0 001.414.586H19a2 2 0 002-2V7a2 2 0 00-2-2h-8.172a2 2 0 00-1.414.586L3 12z" />
